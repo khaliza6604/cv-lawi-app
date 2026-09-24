@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CV Lawi Kontraktor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    --bg:#F6F3EC;
+    --surface:#FFFFFF;
+    --surface-2:#FBF8F1;
+    --ink:#1E2925;
+    --ink-soft:#5D6D68;
+    --ink-faint:#8B9891;
+    --line:#DFD9C9;
+    --line-strong:#C9C0A9;
+    --accent:#B5651D;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#F2DFC4;
+    --status-masuk:#5B6E8C;
+    --status-masuk-bg:#E4E9F1;
+    --status-proses:#B5651D;
+    --status-proses-bg:#F5E4CC;
+    --status-selesai:#3F7D5C;
+    --status-selesai-bg:#DEEDE4;
+    --danger:#A5402F;
+    --danger-bg:#F5DFDA;
+    --shadow: 0 1px 2px rgba(30,41,35,.06), 0 4px 14px rgba(30,41,35,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#151B18; --surface:#1D2521; --surface-2:#222B26; --ink:#EDEAE0;
+      --ink-soft:#A7B3AC; --ink-faint:#788780; --line:#303B34; --line-strong:#3D4A41;
+      --accent:#E08A3E; --accent-ink:#1A140B; --accent-soft:#3A2C18;
+      --status-masuk:#93A6C7; --status-masuk-bg:#242C3A;
+      --status-proses:#E08A3E; --status-proses-bg:#3A2C18;
+      --status-selesai:#7BC39E; --status-selesai-bg:#1D3327;
+      --danger:#E08677; --danger-bg:#3B211D;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#151B18; --surface:#1D2521; --surface-2:#222B26; --ink:#EDEAE0;
+    --ink-soft:#A7B3AC; --ink-faint:#788780; --line:#303B34; --line-strong:#3D4A41;
+    --accent:#E08A3E; --accent-ink:#1A140B; --accent-soft:#3A2C18;
+    --status-masuk:#93A6C7; --status-masuk-bg:#242C3A;
+    --status-proses:#E08A3E; --status-proses-bg:#3A2C18;
+    --status-selesai:#7BC39E; --status-selesai-bg:#1D3327;
+    --danger:#E08677; --danger-bg:#3B211D;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    padding-inline:16px; padding-block:0;
+    max-width:720px; margin:0 auto;
+  }
+  h1,h2,h3{font-family:'Archivo', system-ui, sans-serif; margin:0; text-wrap:balance;}
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums;}
+
+  header.top{
+    position:sticky; top:env(safe-area-inset-top,0px);
+    background:var(--bg); padding-block:14px 10px; z-index:20;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand .mark{
+    width:34px; height:34px; border-radius:8px;
+    background:var(--ink); color:var(--bg);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .brand .mark svg{width:19px; height:19px;}
+  .brand-text{flex:1; min-width:0;}
+  .brand-text h1{font-size:1.02rem; font-weight:800; letter-spacing:.01em; line-height:1.15;}
+  .brand-text p{margin:1px 0 0; font-size:.72rem; color:var(--ink-soft); font-weight:500;}
+  .icon-btn{
+    border:0; background:var(--surface-2); color:var(--ink-soft); width:34px; height:34px;
+    border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; cursor:pointer;
+  }
+  .icon-btn svg{width:16px; height:16px;}
+
+  nav.tabs{
+    display:flex; gap:4px; margin-top:14px;
+    background:var(--surface-2); border:1px solid var(--line);
+    border-radius:11px; padding:3px;
+  }
+  nav.tabs button{
+    flex:1; border:0; background:transparent; color:var(--ink-soft);
+    font:inherit; font-weight:600; font-size:.8rem;
+    padding:9px 4px; border-radius:8px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    transition:background .15s, color .15s;
+  }
+  nav.tabs button svg{width:17px; height:17px;}
+  nav.tabs button.active{background:var(--surface); color:var(--ink); box-shadow:var(--shadow);}
+  nav.tabs button .count{font-family:'IBM Plex Mono', monospace; font-size:.68rem; font-weight:600; color:var(--ink-faint);}
+  nav.tabs button.active .count{color:var(--accent);}
+
+  main{padding-block:16px 90px;}
+  section.panel{display:none;}
+  section.panel.active{display:block;}
+
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;}
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 10px; box-shadow:var(--shadow);}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:1.3rem; font-weight:600; line-height:1;}
+  .stat .l{font-size:.64rem; color:var(--ink-soft); margin-top:5px; font-weight:500; letter-spacing:.02em; text-transform:uppercase;}
+  .stat.masuk .n{color:var(--status-masuk);}
+  .stat.proses .n{color:var(--status-proses);}
+  .stat.selesai .n{color:var(--status-selesai);}
+
+  .toolbar{display:flex; gap:8px; margin-bottom:12px;}
+  .search{flex:1; display:flex; align-items:center; gap:7px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:8px 11px;}
+  .search svg{width:15px; height:15px; color:var(--ink-faint); flex:none;}
+  .search input{border:0; background:transparent; outline:0; color:var(--ink); font:inherit; font-size:.85rem; width:100%;}
+  .search input::placeholder{color:var(--ink-faint);}
+  .btn-add{flex:none; background:var(--ink); color:var(--bg); border:0; border-radius:10px; padding:0 15px; font:inherit; font-weight:600; font-size:.85rem; cursor:pointer; display:flex; align-items:center; gap:6px;}
+  .btn-add svg{width:15px; height:15px;}
+
+  .filters{display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;}
+  .chip{border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); font:inherit; font-size:.72rem; font-weight:600; padding:5px 11px; border-radius:99px; cursor:pointer;}
+  .chip.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+
+  .list{display:flex; flex-direction:column; gap:8px;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:13px; padding:12px 13px; box-shadow:var(--shadow); cursor:pointer;}
+  .card:active{background:var(--surface-2);}
+  .card .row1{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .card .title{font-weight:600; font-size:.92rem; line-height:1.3;}
+  .card .sub{color:var(--ink-soft); font-size:.76rem; margin-top:2px;}
+  .card .meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px;}
+  .tag{font-size:.68rem; font-weight:600; padding:3px 9px; border-radius:99px; background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--line);}
+  .tag.masuk{background:var(--status-masuk-bg); color:var(--status-masuk); border-color:transparent;}
+  .tag.proses{background:var(--status-proses-bg); color:var(--status-proses); border-color:transparent;}
+  .tag.selesai{background:var(--status-selesai-bg); color:var(--status-selesai); border-color:transparent;}
+  .qty{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:.88rem; flex:none; color:var(--ink-soft);}
+
+  .empty{text-align:center; padding:48px 16px; color:var(--ink-soft);}
+  .empty svg{width:34px; height:34px; color:var(--ink-faint); margin-bottom:10px;}
+  .empty p{margin:0; font-size:.85rem;}
+  .empty .hint{font-size:.74rem; color:var(--ink-faint); margin-top:4px;}
+
+  /* Modal / sheet */
+  .overlay{position:fixed; inset:0; background:rgba(20,25,22,.42); z-index:50; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .18s;}
+  .overlay.open{opacity:1; pointer-events:auto;}
+  .sheet{background:var(--surface); width:100%; max-width:720px; border-radius:18px 18px 0 0; padding:18px 18px calc(20px + env(safe-area-inset-bottom,0px)); max-height:88vh; overflow-y:auto; transform:translateY(16px); transition:transform .18s;}
+  .overlay.open .sheet{transform:translateY(0);}
+  .sheet-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .sheet-head h2{font-size:1.02rem; font-weight:700;}
+  .sheet-head button{border:0; background:var(--surface-2); color:var(--ink-soft); width:30px; height:30px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .sheet-head button svg{width:15px; height:15px;}
+
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:.72rem; font-weight:600; color:var(--ink-soft); margin-bottom:5px; text-transform:uppercase; letter-spacing:.03em;}
+  .field input, .field select, .field textarea{width:100%; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font:inherit; font-size:.88rem; padding:9px 11px; border-radius:9px; outline:0;}
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent);}
+  .field textarea{resize:vertical; min-height:56px;}
+  .field-row{display:flex; gap:10px;}
+  .field-row .field{flex:1;}
+  .seg{display:flex; gap:6px;}
+  .seg button{flex:1; border:1px solid var(--line); background:var(--surface-2); color:var(--ink-soft); font:inherit; font-weight:600; font-size:.8rem; padding:9px 6px; border-radius:9px; cursor:pointer;}
+  .seg button.active{background:var(--accent); color:var(--accent-ink); border-color:var(--accent);}
+
+  .items-editor{display:flex; flex-direction:column;}
+  .item-row{display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding-block:8px; border-bottom:1px dashed var(--line);}
+  .item-row:first-child{padding-top:0;}
+  .it-name{flex:1 1 100%; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font:inherit; font-size:.86rem; padding:8px 10px; border-radius:8px; outline:0;}
+  .it-name:focus{border-color:var(--accent);}
+  .it-qtywrap{display:flex; align-items:center; border:1px solid var(--line); border-radius:8px; overflow:hidden; flex:none; background:var(--surface-2);}
+  .it-qtywrap button{width:28px; height:32px; border:0; background:var(--surface-2); color:var(--ink-soft); font-weight:700; font-size:1rem; cursor:pointer;}
+  .it-qtywrap button:active{background:var(--line);}
+  .it-qty{width:46px; text-align:center; border:0; background:transparent; padding:0; font:inherit; font-size:.85rem; color:var(--ink); outline:0;}
+  .it-unit{flex:1 1 76px; min-width:0; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font:inherit; font-size:.85rem; padding:8px 9px; border-radius:8px; outline:0;}
+  .it-unit:focus{border-color:var(--accent);}
+  .it-remove{flex:none; margin-left:auto; width:30px; height:30px; border:0; background:var(--danger-bg); color:var(--danger); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .it-remove svg{width:14px; height:14px;}
+
+  .sheet-actions{display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;}
+  .btn{flex:1; border:0; border-radius:10px; padding:11px; font:inherit; font-weight:700; font-size:.86rem; cursor:pointer; min-width:88px;}
+  .btn.primary{background:var(--ink); color:var(--bg);}
+  .btn.danger{background:var(--danger-bg); color:var(--danger); flex:none; padding-inline:16px;}
+  .btn.ghost{background:var(--surface-2); color:var(--ink-soft);}
+
+  .toast{position:fixed; bottom:calc(18px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(8px); background:var(--ink); color:var(--bg); padding:9px 16px; border-radius:99px; font-size:.8rem; font-weight:600; box-shadow:var(--shadow); z-index:60; opacity:0; pointer-events:none; transition:opacity .18s, transform .18s;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .skel{background:linear-gradient(90deg,var(--surface-2),var(--surface),var(--surface-2)); background-size:200% 100%; animation:sh 1.3s infinite; border-radius:13px; height:64px;}
+  @keyframes sh{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+  /* Nota (printable receipt) */
+  .nota{background:#fff; color:#141414; font-family:'IBM Plex Sans',sans-serif; padding:2px;}
+  .nota-head{text-align:center; border-bottom:2px solid #141414; padding-bottom:10px; margin-bottom:10px;}
+  .nota-co{font-family:'Archivo',sans-serif; font-weight:800; font-size:1.08rem; letter-spacing:.02em;}
+  .nota-sub{font-size:.72rem; color:#555; margin-top:2px;}
+  .nota-title{text-align:center; font-weight:700; font-size:.8rem; letter-spacing:.06em; margin-bottom:12px; text-decoration:underline;}
+  .nota-info{display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; font-size:.76rem; margin-bottom:12px;}
+  .nota-info b{display:block; font-size:.62rem; text-transform:uppercase; color:#666; font-weight:600; margin-bottom:2px;}
+  .nota-table{width:100%; border-collapse:collapse; font-size:.78rem; margin-bottom:10px;}
+  .nota-table th, .nota-table td{border:1px solid #999; padding:5px 7px; text-align:left;}
+  .nota-table td.r{text-align:right;}
+  .nota-note{font-size:.76rem; margin-bottom:14px;}
+  .nota-sign{display:flex; justify-content:space-between; margin-top:34px; font-size:.72rem; text-align:center;}
+  .nota-sign > div{width:44%;}
+  .nota-sign .line{border-bottom:1px solid #141414; height:40px; margin-bottom:6px;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #print-area, #print-area *{visibility:visible;}
+    #print-area{position:fixed; inset:0; padding:22px; background:#fff;}
+    .overlay{position:static !important; background:none !important;}
+  }
+
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important;} }
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>
+    </div>
+    <div class="brand-text">
+      <h1>CV LAWI KONTRAKTOR</h1>
+      <p>Perakitan Panel &amp; Dinamo/Parts</p>
+    </div>
+    <button class="icon-btn" id="menu-btn" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+    </button>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="perakitan">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      Perakitan Panel <span class="count" id="cnt-perakitan">0</span>
+    </button>
+    <button class="tab-btn" data-tab="parts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+      Dinamo/Parts <span class="count" id="cnt-parts">0</span>
+    </button>
+  </nav>
+</header>
+
+<main>
+  <!-- PERAKITAN (merged tools + usage, with status pipeline) -->
+  <section class="panel active" id="panel-perakitan">
+    <div class="stats">
+      <div class="stat masuk"><div class="n mono" id="st-pk-masuk">0</div><div class="l">Masuk</div></div>
+      <div class="stat proses"><div class="n mono" id="st-pk-proses">0</div><div class="l">Proses</div></div>
+      <div class="stat selesai"><div class="n mono" id="st-pk-selesai">0</div><div class="l">Selesai</div></div>
+    </div>
+    <div class="filters" id="filter-perakitan">
+      <button class="chip active" data-status="all">Semua</button>
+      <button class="chip" data-status="Masuk">Masuk</button>
+      <button class="chip" data-status="Proses">Proses</button>
+      <button class="chip" data-status="Selesai">Selesai (Riwayat)</button>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="search-perakitan" placeholder="Cari nama panel, customer, barang...">
+      </div>
+      <button class="btn-add" id="add-perakitan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Catat
+      </button>
+    </div>
+    <div class="list" id="list-perakitan"></div>
+  </section>
+
+  <!-- PARTS -->
+  <section class="panel" id="panel-parts">
+    <div class="stats">
+      <div class="stat masuk"><div class="n mono" id="st-parts-masuk">0</div><div class="l">Masuk</div></div>
+      <div class="stat proses"><div class="n mono" id="st-parts-proses">0</div><div class="l">Proses</div></div>
+      <div class="stat selesai"><div class="n mono" id="st-parts-selesai">0</div><div class="l">Selesai</div></div>
+    </div>
+    <div class="filters" id="filter-parts">
+      <button class="chip active" data-status="all">Semua</button>
+      <button class="chip" data-status="Masuk">Masuk</button>
+      <button class="chip" data-status="Proses">Proses</button>
+      <button class="chip" data-status="Selesai">Selesai (Riwayat)</button>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="search-parts" placeholder="Cari dinamo, part, customer...">
+      </div>
+      <button class="btn-add" id="add-parts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Catat
+      </button>
+    </div>
+    <div class="list" id="list-parts"></div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  var ICON_BOX = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>';
+  var ICON_GEAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>';
+  var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>';
+
+  var state = {
+    perakitan: [], // {id, panelName, customer, dateIn, status, dateDone, items:[{name,qty,unit}], note, updatedAt}
+    parts: [],
+    loaded: {perakitan:false, parts:false},
+    filter: {perakitan:"all", parts:"all"}
+  };
+  var db = null;
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function todayStr(){ var d=new Date(); return d.toISOString().slice(0,10); }
+  function fmtDate(s){
+    if(!s) return "-";
+    var d = new Date(s+"T00:00:00");
+    if(isNaN(d)) return s;
+    var bulan=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+    return d.getDate()+" "+bulan[d.getMonth()]+" "+d.getFullYear();
+  }
+  function toast(msg){
+    var t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(toast._h);
+    toast._h=setTimeout(function(){t.classList.remove('show');},1800);
+  }
+
+  // ---------- persistence ----------
+  async function initDb(){
+    try{
+      if(window.claude && window.claude.use){
+        db = await window.claude.use("db");
+      }
+    }catch(e){ db = null; }
+    await loadAll();
+  }
+
+  async function loadAll(){
+    await Promise.all([loadCollection('perakitan'), loadCollection('parts')]);
+  }
+
+  function collectionName(kind){ return kind === 'perakitan' ? 'perakitan_jobs' : kind; }
+
+  async function loadCollection(kind){
+    var col = collectionName(kind);
+    try{
+      if(db){
+        var res = await db.collection(col).query();
+        state[kind] = (res && res.docs ? res.docs : []).map(function(d){ return Object.assign({id:d.id}, d.data || d); });
+      } else {
+        state[kind] = loadLocal(kind);
+      }
+    }catch(e){
+      state[kind] = loadLocal(kind);
+    }
+    state.loaded[kind] = true;
+    render(kind);
+  }
+
+  function loadLocal(kind){
+    try{ var raw = localStorage.getItem('cvlawi_'+kind); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+  }
+  function saveLocal(kind){
+    try{ localStorage.setItem('cvlawi_'+kind, JSON.stringify(state[kind])); }catch(e){}
+  }
+
+  async function persistUpsert(kind, doc){
+    var idx = state[kind].findIndex(function(t){return t.id===doc.id;});
+    if(idx>-1) state[kind][idx]=doc; else state[kind].push(doc);
+    var col = collectionName(kind);
+    if(db){
+      try{ await db.collection(col).doc(doc.id).set(doc); return true; }
+      catch(e){ toast('Gagal menyimpan ke server, disimpan lokal'); }
+    }
+    saveLocal(kind);
+    return true;
+  }
+
+  async function persistDelete(kind, id){
+    state[kind] = state[kind].filter(function(t){return t.id!==id;});
+    var col = collectionName(kind);
+    if(db){
+      try{ await db.collection(col).doc(id).delete(); return true; }
+      catch(e){ toast('Gagal hapus di server, dihapus lokal'); }
+    }
+    saveLocal(kind);
+    return true;
+  }
+
+  // ---------- generic file download (backup + nota PDF) ----------
+  async function downloadBlob(filename, blob, okMsg){
+    try{
+      if(window.claude && window.claude.use){
+        var downloads = await window.claude.use('downloads');
+        if(downloads){ await downloads.save({filename:filename, data:blob}); toast(okMsg||'File diunduh'); return true; }
+      }
+    }catch(e){}
+    try{
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+      toast(okMsg||'File diunduh');
+      return true;
+    }catch(e){ toast('Gagal membuat file unduhan'); return false; }
+  }
+
+  async function exportBackup(){
+    var data = {app:'CV LAWI KONTRAKTOR', exportedAt:new Date().toISOString(), perakitan:state.perakitan, parts:state.parts};
+    var filename = 'cv-lawi-backup-'+todayStr()+'.json';
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    await downloadBlob(filename, blob, 'Cadangan diunduh');
+  }
+
+  function importBackup(file){
+    var reader = new FileReader();
+    reader.onload = async function(){
+      try{
+        var data = JSON.parse(reader.result);
+        var kinds = ['perakitan','parts'];
+        for(var i=0;i<kinds.length;i++){
+          var k = kinds[i];
+          var arr = data[k];
+          if(!Array.isArray(arr)) continue;
+          for(var j=0;j<arr.length;j++){
+            var doc = arr[j];
+            if(!doc.id) doc.id = uid();
+            await persistUpsert(k, doc);
+            var idx = state[k].findIndex(function(x){return x.id===doc.id;});
+            if(idx>-1) state[k][idx]=doc; else state[k].push(doc);
+          }
+        }
+        renderPerakitan(); renderParts();
+        closeSheet();
+        toast('Data berhasil dipulihkan');
+      }catch(e){ toast('File cadangan tidak valid'); }
+    };
+    reader.readAsText(file);
+  }
+
+  function excelRowsPerakitan(){
+    var rows = [];
+    (state.perakitan||[]).forEach(function(job){
+      var items = job.items && job.items.length ? job.items : [{name:'-', qty:'', unit:''}];
+      items.forEach(function(it, i){
+        rows.push({
+          'Panel': i===0 ? (job.panelName||'') : '',
+          'Customer': i===0 ? (job.customer||'') : '',
+          'Status': i===0 ? (job.status||'') : '',
+          'Tgl Masuk': i===0 ? fmtDate(job.dateIn) : '',
+          'Nama Barang': it.name||'',
+          'Qty': it.qty||'',
+          'Satuan': it.unit||'',
+          'Catatan': i===0 ? (job.note||'') : ''
+        });
+      });
+    });
+    return rows;
+  }
+  function excelRowsParts(){
+    return (state.parts||[]).map(function(p){
+      return {
+        'Jenis': p.type||'',
+        'Nama Barang': p.itemName||'',
+        'Customer': p.customer||'',
+        'Status': p.status||'',
+        'Tgl Masuk': fmtDate(p.dateIn),
+        'Tgl Selesai': fmtDate(p.dateDone),
+        'Kerusakan / Pekerjaan': p.description||'',
+        'Biaya': p.cost||'',
+        'Catatan': p.note||''
+      };
+    });
+  }
+  async function exportExcel(){
+    if(!(window.XLSX)){ toast('Pembuat Excel belum siap, coba lagi sebentar'); return; }
+    try{
+      var wb = XLSX.utils.book_new();
+      var wsPerakitan = XLSX.utils.json_to_sheet(excelRowsPerakitan());
+      var wsParts = XLSX.utils.json_to_sheet(excelRowsParts());
+      XLSX.utils.book_append_sheet(wb, wsPerakitan, 'Perakitan Panel');
+      XLSX.utils.book_append_sheet(wb, wsParts, 'Parts & Dinamo');
+      var wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+      var blob = new Blob([wbout], {type:'application/octet-stream'});
+      var filename = 'cv-lawi-data-'+todayStr()+'.xlsx';
+      await downloadBlob(filename, blob, 'Excel diunduh');
+    }catch(e){ toast('Gagal membuat file Excel'); }
+  }
+
+  document.getElementById('menu-btn').addEventListener('click', function(){
+    openSheet(
+      '<div class="sheet-head"><h2>Menu</h2><button id="sheet-close">'+CLOSE_ICON+'</button></div>'+
+      '<div class="field"><label>Unduh sebagai Excel</label><button type="button" class="btn primary" id="m-excel" style="width:100%;">Unduh Excel (.xlsx)</button></div>'+
+      '<div class="field"><label>Cadangkan Data</label><button type="button" class="btn ghost" id="m-export" style="width:100%;">Unduh Cadangan (.json)</button></div>'+
+      '<div class="field"><label>Pulihkan Data</label><button type="button" class="btn ghost" id="m-import" style="width:100%;">Pilih File Cadangan</button><input type="file" id="m-import-file" accept="application/json,.json" hidden></div>'+
+      '<p style="font-size:.74rem;color:var(--ink-soft);line-height:1.5;margin:0;">Excel (.xlsx) untuk dilihat/dicetak sebagai laporan. Cadangan (.json) untuk memindahkan seluruh data ke perangkat lain lewat menu Pulihkan Data.</p>'
+    );
+    document.getElementById('sheet-close').onclick = closeSheet;
+    document.getElementById('m-excel').onclick = exportExcel;
+    document.getElementById('m-export').onclick = exportBackup;
+    document.getElementById('m-import').onclick = function(){ document.getElementById('m-import-file').click(); };
+    document.getElementById('m-import-file').onchange = function(e){
+      if(e.target.files && e.target.files[0]) importBackup(e.target.files[0]);
+    };
+  });
+
+  // ---------- tabs ----------
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+      btn.classList.add('active');
+      document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  function render(kind){
+    if(kind==='perakitan') renderPerakitan();
+    if(kind==='parts') renderParts();
+  }
+
+  function emptyState(icon, text, hint){
+    return '<div class="empty">'+icon+'<p>'+esc(text)+'</p><div class="hint">'+esc(hint)+'</div></div>';
+  }
+  function skeletons(n){ var s=''; for(var i=0;i<n;i++) s+='<div class="skel"></div>'; return s; }
+  function statusClass(s){ return s==='Masuk'?'masuk':(s==='Proses'?'proses':'selesai'); }
+
+  function allHistoricalItemNames(){
+    var set = {};
+    state.perakitan.forEach(function(j){ (j.items||[]).forEach(function(it){ if(it.name) set[it.name]=1; }); });
+    return Object.keys(set).sort();
+  }
+
+  // ---------- PERAKITAN ----------
+  function renderPerakitan(){
+    document.getElementById('cnt-perakitan').textContent = state.perakitan.length;
+    document.getElementById('st-pk-masuk').textContent = state.perakitan.filter(function(j){return j.status==='Masuk';}).length;
+    document.getElementById('st-pk-proses').textContent = state.perakitan.filter(function(j){return j.status==='Proses';}).length;
+    document.getElementById('st-pk-selesai').textContent = state.perakitan.filter(function(j){return j.status==='Selesai';}).length;
+
+    var q = (document.getElementById('search-perakitan').value||'').toLowerCase();
+    var f = state.filter.perakitan;
+    var items = state.perakitan.filter(function(j){
+      if(f!=='all' && j.status!==f) return false;
+      if(!q) return true;
+      var itemNames = (j.items||[]).map(function(it){return it.name;}).join(' ');
+      return (j.panelName+' '+j.customer+' '+itemNames).toLowerCase().indexOf(q)>-1;
+    }).sort(function(a,b){ return (b.dateIn||'').localeCompare(a.dateIn||''); });
+
+    var el = document.getElementById('list-perakitan');
+    if(!state.loaded.perakitan){ el.innerHTML = skeletons(3); return; }
+    if(!items.length){
+      el.innerHTML = emptyState(ICON_BOX,
+        q||f!=='all' ? 'Tidak ada pekerjaan yang cocok' : 'Belum ada pekerjaan panel tercatat',
+        q||f!=='all' ? 'Coba ubah pencarian atau filter status' : 'Ketuk "Catat" saat mulai merakit panel baru.');
+      return;
+    }
+    el.innerHTML = items.map(function(j){
+      var its = j.items||[];
+      var shown = its.slice(0,4).map(function(it){ return '<span class="tag">'+esc(it.name)+' &middot; '+esc(it.qty)+(it.unit?(' '+esc(it.unit)):'')+'</span>'; }).join('');
+      var more = its.length>4 ? '<span class="tag">+'+(its.length-4)+' lagi</span>' : '';
+      return '<div class="card" data-id="'+j.id+'" data-kind="perakitan">'+
+        '<div class="row1">'+
+          '<div><div class="title">'+esc(j.panelName||'Panel')+'</div><div class="sub">'+esc(j.customer||'-')+' &middot; '+fmtDate(j.dateIn)+'</div></div>'+
+          '<div class="qty">'+its.length+' item</div>'+
+        '</div>'+
+        '<div class="meta"><span class="tag '+statusClass(j.status)+'">'+esc(j.status||'Masuk')+'</span>'+shown+more+'</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  function openPerakitanForm(job){
+    var isEdit = !!job;
+    var formItems = isEdit ? (job.items||[]).map(function(it){ return {_rid:uid(), name:it.name, qty:it.qty, unit:it.unit}; }) : [];
+    var base = isEdit ? job : {panelName:'', customer:'', dateIn: todayStr(), status:'Masuk', dateDone:'', note:''};
+    var dlNames = allHistoricalItemNames();
+    var recentJobs = state.perakitan.slice().sort(function(a,b){ return (b.dateIn||'').localeCompare(a.dateIn||''); }).slice(0,12);
+
+    openSheet(
+      '<div class="sheet-head"><h2>'+(isEdit?'Ubah Pekerjaan Panel':'Catat Pekerjaan Panel Baru')+'</h2><button id="sheet-close">'+CLOSE_ICON+'</button></div>'+
+      (!isEdit && recentJobs.length ? (
+        '<div class="field"><label>Salin Barang dari Pekerjaan Sebelumnya (opsional)</label><select id="f-copy">'+
+        '<option value="">&mdash; Mulai kosong &mdash;</option>'+
+        recentJobs.map(function(j){ return '<option value="'+j.id+'">'+esc(j.panelName||'Panel')+' &middot; '+fmtDate(j.dateIn)+' ('+(j.items?j.items.length:0)+' item)</option>'; }).join('')+
+        '</select></div>'
+      ) : '')+
+      '<div class="field-row">'+
+        '<div class="field"><label>Tanggal Masuk</label><input id="f-date" type="date" value="'+esc(base.dateIn)+'"></div>'+
+        '<div class="field"><label>Nama Panel</label><input id="f-panel" value="'+esc(base.panelName)+'" placeholder="Panel PGB Beras"></div>'+
+      '</div>'+
+      '<div class="field"><label>Customer / Pabrik</label><input id="f-customer" value="'+esc(base.customer)+'" placeholder="Nama pabrik / bengkel"></div>'+
+      '<div class="field"><label>Status Pengerjaan</label><div class="seg" id="f-status">'+
+        ['Masuk','Proses','Selesai'].map(function(c){return '<button type="button" data-v="'+c+'" class="'+(base.status===c?'active':'')+'">'+c+'</button>';}).join('')+
+      '</div></div>'+
+      '<div class="field"><label>Tanggal Selesai (jika sudah selesai)</label><input id="f-datedone" type="date" value="'+esc(base.dateDone)+'"></div>'+
+      '<div class="field"><label>Alat / Barang Dipakai</label>'+
+        '<div class="items-editor" id="items-editor"></div>'+
+        '<button type="button" class="btn ghost" id="f-additem" style="width:100%;margin-top:8px;">+ Tambah Barang</button>'+
+      '</div>'+
+      '<div class="field"><label>Catatan</label><textarea id="f-note" placeholder="Catatan tambahan (opsional)">'+esc(base.note)+'</textarea></div>'+
+      '<datalist id="dl-items">'+dlNames.map(function(n){return '<option value="'+esc(n)+'">';}).join('')+'</datalist>'+
+      '<div class="sheet-actions">'+
+        (isEdit? '<button type="button" class="btn ghost" id="f-nota">Nota</button><button type="button" class="btn danger" id="f-delete">'+ICON_TRASH+'</button>':'')+
+        '<button type="button" class="btn primary" id="f-save">Simpan</button>'+
+      '</div>'
+    );
+
+    bindSeg('f-status');
+    var itemsWrap = document.getElementById('items-editor');
+
+    function renderItemRows(){
+      if(!formItems.length){
+        itemsWrap.innerHTML = '<div style="font-size:.78rem;color:var(--ink-soft);padding-block:6px;">Belum ada barang. Ketuk "+ Tambah Barang".</div>';
+        return;
+      }
+      itemsWrap.innerHTML = formItems.map(function(it){
+        return '<div class="item-row" data-rid="'+it._rid+'">'+
+          '<input class="it-name" list="dl-items" placeholder="Nama barang (mis. MCB 3 fasa 32A)" value="'+esc(it.name)+'">'+
+          '<div class="it-qtywrap">'+
+            '<button type="button" class="it-down" aria-label="Kurangi">&minus;</button>'+
+            '<input class="it-qty mono" type="number" min="0" step="0.01" value="'+esc(it.qty)+'">'+
+            '<button type="button" class="it-up" aria-label="Tambah">+</button>'+
+          '</div>'+
+          '<input class="it-unit" value="'+esc(it.unit)+'" placeholder="satuan">'+
+          '<button type="button" class="it-remove" aria-label="Hapus baris">'+ICON_TRASH+'</button>'+
+        '</div>';
+      }).join('');
+    }
+    renderItemRows();
+
+    itemsWrap.addEventListener('input', function(e){
+      var row = e.target.closest('.item-row'); if(!row) return;
+      var it = formItems.find(function(x){return x._rid===row.dataset.rid;});
+      if(!it) return;
+      if(e.target.classList.contains('it-name')) it.name = e.target.value;
+      if(e.target.classList.contains('it-qty')) it.qty = parseFloat(e.target.value)||0;
+      if(e.target.classList.contains('it-unit')) it.unit = e.target.value;
+    });
+    itemsWrap.addEventListener('click', function(e){
+      var rm = e.target.closest('.it-remove');
+      if(rm){
+        var rid = rm.closest('.item-row').dataset.rid;
+        formItems = formItems.filter(function(x){return x._rid!==rid;});
+        renderItemRows();
+        return;
+      }
+      var up = e.target.closest('.it-up'), down = e.target.closest('.it-down');
+      if(up||down){
+        var rid2 = (up||down).closest('.item-row').dataset.rid;
+        var it = formItems.find(function(x){return x._rid===rid2;});
+        if(it){ it.qty = Math.max(0, Math.round(((parseFloat(it.qty)||0) + (up?1:-1))*100)/100); renderItemRows(); }
+      }
+    });
+
+    document.getElementById('f-additem').onclick = function(){
+      formItems.push({_rid:uid(), name:'', qty:1, unit:'pcs'});
+      renderItemRows();
+      var last = itemsWrap.querySelector('.item-row:last-child .it-name');
+      if(last) last.focus();
+    };
+
+    var copySel = document.getElementById('f-copy');
+    if(copySel){
+      copySel.addEventListener('change', function(){
+        if(!copySel.value){ formItems = []; renderItemRows(); return; }
+        var src = state.perakitan.find(function(j){return j.id===copySel.value;});
+        if(src){
+          formItems = (src.items||[]).map(function(it){ return {_rid:uid(), name:it.name, qty:it.qty, unit:it.unit}; });
+          if(!document.getElementById('f-panel').value) document.getElementById('f-panel').value = src.panelName||'';
+          if(!document.getElementById('f-customer').value) document.getElementById('f-customer').value = src.customer||'';
+          renderItemRows();
+          toast('Barang disalin, sesuaikan tambahan/pengurangannya');
+        }
+      });
+    }
+
+    document.getElementById('sheet-close').onclick = closeSheet;
+    document.getElementById('f-save').onclick = async function(){
+      var panelName = document.getElementById('f-panel').value.trim();
+      if(!panelName){ toast('Nama panel wajib diisi'); return; }
+      var cleanItems = formItems.filter(function(it){return it.name && it.name.trim();}).map(function(it){
+        return {name:it.name.trim(), qty:parseFloat(it.qty)||0, unit:(it.unit||'pcs').trim()||'pcs'};
+      });
+      if(!cleanItems.length){ toast('Tambahkan minimal satu barang'); return; }
+      var doc = {
+        id: job && job.id || uid(),
+        panelName: panelName,
+        customer: document.getElementById('f-customer').value.trim(),
+        dateIn: document.getElementById('f-date').value || todayStr(),
+        status: currentSeg('f-status') || 'Masuk',
+        dateDone: document.getElementById('f-datedone').value || '',
+        items: cleanItems,
+        note: document.getElementById('f-note').value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+      await persistUpsert('perakitan', doc);
+      var idx = state.perakitan.findIndex(function(t){return t.id===doc.id;});
+      if(idx>-1) state.perakitan[idx]=doc; else state.perakitan.push(doc);
+      renderPerakitan(); closeSheet(); toast(isEdit?'Pekerjaan diperbarui':'Pekerjaan dicatat');
+    };
+    if(isEdit){
+      document.getElementById('f-delete').onclick = async function(){
+        await persistDelete('perakitan', job.id);
+        state.perakitan = state.perakitan.filter(function(t){return t.id!==job.id;});
+        renderPerakitan(); closeSheet(); toast('Pekerjaan dihapus');
+      };
+      document.getElementById('f-nota').onclick = function(){ openNota(notaDataPerakitan(job)); };
+    }
+  }
+
+  // ---------- PARTS ----------
+  function renderParts(){
+    document.getElementById('cnt-parts').textContent = state.parts.length;
+    document.getElementById('st-parts-masuk').textContent = state.parts.filter(function(p){return p.status==='Masuk';}).length;
+    document.getElementById('st-parts-proses').textContent = state.parts.filter(function(p){return p.status==='Proses';}).length;
+    document.getElementById('st-parts-selesai').textContent = state.parts.filter(function(p){return p.status==='Selesai';}).length;
+
+    var q = (document.getElementById('search-parts').value||'').toLowerCase();
+    var f = state.filter.parts;
+    var items = state.parts.filter(function(p){
+      if(f!=='all' && p.status!==f) return false;
+      if(!q) return true;
+      return (p.itemName+' '+p.customer+' '+p.type+' '+(p.description||'')).toLowerCase().indexOf(q)>-1;
+    }).sort(function(a,b){ return (b.dateIn||'').localeCompare(a.dateIn||''); });
+
+    var el = document.getElementById('list-parts');
+    if(!state.loaded.parts){ el.innerHTML = skeletons(3); return; }
+    if(!items.length){
+      el.innerHTML = emptyState(ICON_GEAR,
+        q||f!=='all' ? 'Tidak ada yang cocok' : 'Belum ada dinamo/parts tercatat',
+        q||f!=='all' ? 'Coba ubah pencarian atau filter status' : 'Ketuk "Catat" saat dinamo atau part masuk untuk diperbaiki.');
+      return;
+    }
+    el.innerHTML = items.map(function(p){
+      return '<div class="card" data-id="'+p.id+'" data-kind="parts">'+
+        '<div class="row1">'+
+          '<div><div class="title">'+esc(p.itemName)+'</div><div class="sub">'+esc(p.customer||'-')+' &middot; '+esc(p.type)+'</div></div>'+
+        '</div>'+
+        '<div class="meta">'+
+          '<span class="tag '+statusClass(p.status)+'">'+esc(p.status)+'</span>'+
+          '<span class="tag">masuk '+fmtDate(p.dateIn)+'</span>'+
+          (p.status==='Selesai' && p.dateDone ? '<span class="tag">selesai '+fmtDate(p.dateDone)+'</span>' : '')+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  function openPartsForm(item){
+    var isEdit = !!item;
+    item = item || {type:'Dinamo', itemName:'', customer:'', dateIn: todayStr(), status:'Masuk', dateDone:'', description:'', cost:'', note:''};
+    openSheet(
+      '<div class="sheet-head"><h2>'+(isEdit?'Ubah Data':'Catat Dinamo / Part Masuk')+'</h2><button id="sheet-close">'+CLOSE_ICON+'</button></div>'+
+      '<div class="field"><label>Jenis</label><div class="seg" id="f-type">'+
+        ['Dinamo','Part Panel'].map(function(c){return '<button type="button" data-v="'+c+'" class="'+(item.type===c?'active':'')+'">'+c+'</button>';}).join('')+
+      '</div></div>'+
+      '<div class="field"><label>Nama Barang</label><input id="f-itemname" value="'+esc(item.itemName)+'" placeholder="Dinamo motor 5HP / Kontaktor Schneider 32A"></div>'+
+      '<div class="field"><label>Customer / Asal</label><input id="f-customer" value="'+esc(item.customer)+'" placeholder="Nama pabrik beras / bengkel"></div>'+
+      '<div class="field-row">'+
+        '<div class="field"><label>Tanggal Masuk</label><input id="f-datein" type="date" value="'+esc(item.dateIn)+'"></div>'+
+        '<div class="field"><label>Tanggal Selesai</label><input id="f-datedone" type="date" value="'+esc(item.dateDone)+'"></div>'+
+      '</div>'+
+      '<div class="field"><label>Status</label><div class="seg" id="f-status">'+
+        ['Masuk','Proses','Selesai'].map(function(c){return '<button type="button" data-v="'+c+'" class="'+(item.status===c?'active':'')+'">'+c+'</button>';}).join('')+
+      '</div></div>'+
+      '<div class="field"><label>Kerusakan / Pekerjaan</label><textarea id="f-desc" placeholder="Deskripsi kerusakan atau pekerjaan yang dilakukan">'+esc(item.description)+'</textarea></div>'+
+      '<div class="field"><label>Biaya Perbaikan (Rp, opsional)</label><input id="f-cost" type="number" min="0" step="1000" value="'+esc(item.cost)+'" placeholder="0"></div>'+
+      '<div class="field"><label>Catatan</label><textarea id="f-note" placeholder="Catatan tambahan (opsional)">'+esc(item.note)+'</textarea></div>'+
+      '<div class="sheet-actions">'+
+        (isEdit? '<button type="button" class="btn ghost" id="f-nota-masuk">Nota Masuk</button>':'')+
+        (isEdit && item.status==='Selesai' ? '<button type="button" class="btn ghost" id="f-nota-keluar">Nota Selesai</button>':'')+
+        (isEdit? '<button type="button" class="btn danger" id="f-delete">'+ICON_TRASH+'</button>':'')+
+        '<button type="button" class="btn primary" id="f-save">Simpan</button>'+
+      '</div>'
+    );
+    bindSeg('f-type'); bindSeg('f-status');
+    document.getElementById('sheet-close').onclick = closeSheet;
+    document.getElementById('f-save').onclick = async function(){
+      var itemName = document.getElementById('f-itemname').value.trim();
+      if(!itemName){ toast('Nama barang wajib diisi'); return; }
+      var status = currentSeg('f-status') || 'Masuk';
+      var doc = {
+        id: item.id || uid(),
+        type: currentSeg('f-type') || 'Dinamo',
+        itemName: itemName,
+        customer: document.getElementById('f-customer').value.trim(),
+        dateIn: document.getElementById('f-datein').value || todayStr(),
+        dateDone: document.getElementById('f-datedone').value || '',
+        status: status,
+        description: document.getElementById('f-desc').value.trim(),
+        cost: parseFloat(document.getElementById('f-cost').value)||0,
+        note: document.getElementById('f-note').value.trim()
+      };
+      await persistUpsert('parts', doc);
+      var idx = state.parts.findIndex(function(t){return t.id===doc.id;});
+      if(idx>-1) state.parts[idx]=doc; else state.parts.push(doc);
+      renderParts(); closeSheet(); toast(isEdit?'Data diperbarui':'Data ditambahkan');
+    };
+    if(isEdit){
+      document.getElementById('f-delete').onclick = async function(){
+        await persistDelete('parts', item.id);
+        state.parts = state.parts.filter(function(t){return t.id!==item.id;});
+        renderParts(); closeSheet(); toast('Data dihapus');
+      };
+      document.getElementById('f-nota-masuk').onclick = function(){ openNota(notaDataParts(item,'masuk')); };
+      var keluarBtn = document.getElementById('f-nota-keluar');
+      if(keluarBtn) keluarBtn.onclick = function(){ openNota(notaDataParts(item,'keluar')); };
+    }
+  }
+
+  function bindSeg(id){
+    var wrap = document.getElementById(id);
+    wrap.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      wrap.querySelectorAll('button').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+    });
+  }
+  function currentSeg(id){
+    var b = document.querySelector('#'+id+' button.active');
+    return b ? b.dataset.v : null;
+  }
+
+  document.getElementById('search-perakitan').addEventListener('input', renderPerakitan);
+  document.getElementById('search-parts').addEventListener('input', renderParts);
+  document.getElementById('filter-perakitan').addEventListener('click', function(e){
+    var chip = e.target.closest('.chip'); if(!chip) return;
+    document.querySelectorAll('#filter-perakitan .chip').forEach(function(c){c.classList.remove('active');});
+    chip.classList.add('active');
+    state.filter.perakitan = chip.dataset.status;
+    renderPerakitan();
+  });
+  document.getElementById('filter-parts').addEventListener('click', function(e){
+    var chip = e.target.closest('.chip'); if(!chip) return;
+    document.querySelectorAll('#filter-parts .chip').forEach(function(c){c.classList.remove('active');});
+    chip.classList.add('active');
+    state.filter.parts = chip.dataset.status;
+    renderParts();
+  });
+
+  document.getElementById('list-perakitan').addEventListener('click', function(e){
+    var c = e.target.closest('.card'); if(!c) return;
+    openPerakitanForm(state.perakitan.find(function(t){return t.id===c.dataset.id;}));
+  });
+  document.getElementById('list-parts').addEventListener('click', function(e){
+    var c = e.target.closest('.card'); if(!c) return;
+    openPartsForm(state.parts.find(function(t){return t.id===c.dataset.id;}));
+  });
+
+  document.getElementById('add-perakitan').addEventListener('click', function(){ openPerakitanForm(null); });
+  document.getElementById('add-parts').addEventListener('click', function(){ openPartsForm(null); });
+
+  // ---------- sheet / modal ----------
+  var overlay = document.getElementById('overlay');
+  var sheetEl = document.getElementById('sheet');
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) closeSheet(); });
+  function openSheet(html){ sheetEl.innerHTML = html; overlay.classList.add('open'); }
+  function closeSheet(){ overlay.classList.remove('open'); }
+
+  // ---------- Nota (printable + downloadable PDF) ----------
+  function notaDataPerakitan(job){
+    return {
+      title:'NOTA PEMAKAIAN BARANG',
+      info:[['Panel', job.panelName||'-'],['Customer', job.customer||'-'],['Status', job.status||'-'],['Tanggal', fmtDate(job.dateIn)]],
+      headers:['No','Nama Barang','Qty','Satuan'],
+      rows:(job.items||[]).map(function(it,i){ return [String(i+1), it.name, String(it.qty), it.unit||'']; }),
+      note: job.note||'', cost:null,
+      signLeft:'Diserahkan oleh', signRight:'Diterima oleh',
+      filename:'nota-perakitan-'+slug(job.panelName||'panel')+'-'+(job.dateIn||todayStr())+'.pdf'
+    };
+  }
+  function notaDataParts(p, type){
+    var isKeluar = type==='keluar';
+    return {
+      title: isKeluar ? 'NOTA SERAH TERIMA (SELESAI)' : 'NOTA TANDA TERIMA BARANG MASUK',
+      info:[['Jenis', p.type],['Customer', p.customer||'-'],[isKeluar?'Tgl Selesai':'Tgl Masuk', fmtDate(isKeluar?p.dateDone:p.dateIn)]],
+      headers:['Nama Barang','Kerusakan / Pekerjaan'],
+      rows:[[p.itemName, p.description||'-']],
+      note: p.note||'', cost: isKeluar && p.cost ? p.cost : null,
+      signLeft:'Diserahkan oleh', signRight: isKeluar ? 'Diterima oleh (Customer)' : 'Diterima oleh (Bengkel)',
+      filename:'nota-'+type+'-'+slug(p.itemName||'part')+'-'+todayStr()+'.pdf'
+    };
+  }
+  function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'item'; }
+
+  function renderNotaHTML(data){
+    var rows = data.rows.map(function(r){
+      return '<tr>'+r.map(function(v,i){ return '<td'+(/qty/i.test(data.headers[i]||'')?' class="r"':'')+'>'+esc(v)+'</td>'; }).join('')+'</tr>';
+    }).join('');
+    var headHtml = data.headers.map(function(h){return '<th>'+esc(h)+'</th>';}).join('');
+    return '<div class="nota">'+
+      '<div class="nota-head"><div class="nota-co">CV LAWI KONTRAKTOR</div><div class="nota-sub">Pengadaan &amp; Perbaikan Panel Listrik</div></div>'+
+      '<div class="nota-title">'+esc(data.title)+'</div>'+
+      '<div class="nota-info">'+data.info.map(function(p){return '<div><b>'+esc(p[0])+'</b>'+esc(p[1]||'-')+'</div>';}).join('')+'</div>'+
+      '<table class="nota-table"><thead><tr>'+headHtml+'</tr></thead><tbody>'+rows+'</tbody></table>'+
+      (data.cost ? '<div class="nota-note"><b>Biaya:</b> Rp '+Number(data.cost).toLocaleString('id-ID')+'</div>' : '')+
+      (data.note ? '<div class="nota-note"><b>Catatan:</b> '+esc(data.note)+'</div>' : '')+
+      '<div class="nota-sign"><div><div class="line"></div>'+esc(data.signLeft)+'</div><div><div class="line"></div>'+esc(data.signRight)+'</div></div>'+
+    '</div>';
+  }
+
+  function drawNotaTable(doc, headers, rows, startY, pw){
+    var margin = 12, tw = pw - margin*2, n = headers.length, colW = tw/n, y = startY;
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+    headers.forEach(function(h,i){ doc.text(h, margin + colW*i + 1, y); });
+    y += 2; doc.setLineWidth(0.2); doc.line(margin, y, margin+tw, y); y += 4.5;
+    doc.setFont('helvetica','normal');
+    rows.forEach(function(r){
+      var maxLines = 1;
+      var cellLines = r.map(function(val){
+        var lines = doc.splitTextToSize(String(val==null?'':val), colW-2);
+        if(lines.length>maxLines) maxLines = lines.length;
+        return lines;
+      });
+      cellLines.forEach(function(lines,i){ doc.text(lines, margin + colW*i + 1, y); });
+      y += maxLines*4.2 + 1.5;
+    });
+    doc.line(margin, y, margin+tw, y);
+    return y + 6;
+  }
+
+  function buildNotaPdf(data){
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF({unit:'mm', format:'a5'});
+    var pw = doc.internal.pageSize.getWidth();
+    var ph = doc.internal.pageSize.getHeight();
+    var cx = pw/2, y = 16;
+    doc.setFont('helvetica','bold'); doc.setFontSize(13);
+    doc.text('CV LAWI KONTRAKTOR', cx, y, {align:'center'}); y += 5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.text('Pengadaan & Perbaikan Panel Listrik', cx, y, {align:'center'}); y += 4;
+    doc.setDrawColor(20); doc.setLineWidth(0.4); doc.line(10,y,pw-10,y); y += 7;
+    doc.setFont('helvetica','bold'); doc.setFontSize(10.5);
+    doc.text(data.title, cx, y, {align:'center'}); y += 8;
+    doc.setFontSize(9);
+    data.info.forEach(function(pair){
+      doc.setFont('helvetica','bold'); doc.text(String(pair[0])+':', 12, y);
+      doc.setFont('helvetica','normal'); doc.text(String(pair[1]||'-'), 46, y);
+      y += 5.5;
+    });
+    y += 2;
+    y = drawNotaTable(doc, data.headers, data.rows, y, pw);
+    doc.setFontSize(8.5);
+    if(data.cost){
+      doc.setFont('helvetica','bold'); doc.text('Biaya:', 12, y);
+      doc.setFont('helvetica','normal'); doc.text('Rp '+Number(data.cost).toLocaleString('id-ID'), 28, y);
+      y += 6;
+    }
+    if(data.note){
+      doc.setFont('helvetica','bold'); doc.text('Catatan:', 12, y); y += 4.5;
+      doc.setFont('helvetica','normal');
+      var noteLines = doc.splitTextToSize(data.note, pw-24);
+      doc.text(noteLines, 12, y); y += noteLines.length*4.2 + 4;
+    }
+    var sy = ph - 30, margin = 12, half = (pw-margin*2)/2;
+    doc.setFontSize(8.5);
+    doc.line(margin, sy, margin+half-8, sy);
+    doc.text(data.signLeft, margin+(half-8)/2, sy+4, {align:'center'});
+    doc.line(margin+half+8, sy, pw-margin, sy);
+    doc.text(data.signRight, margin+half+8+(half-8)/2, sy+4, {align:'center'});
+    return doc.output('blob');
+  }
+
+  function openNota(data){
+    openSheet(
+      '<div class="sheet-head"><h2>Nota</h2><button id="sheet-close">'+CLOSE_ICON+'</button></div>'+
+      '<div id="print-area">'+renderNotaHTML(data)+'</div>'+
+      '<div class="sheet-actions"><button type="button" class="btn ghost" id="nota-close">Tutup</button><button type="button" class="btn ghost" id="nota-print">Cetak</button><button type="button" class="btn primary" id="nota-download">Unduh PDF</button></div>'
+    );
+    document.getElementById('sheet-close').onclick = closeSheet;
+    document.getElementById('nota-close').onclick = closeSheet;
+    document.getElementById('nota-print').onclick = function(){ window.print(); };
+    document.getElementById('nota-download').onclick = async function(){
+      if(!(window.jspdf && window.jspdf.jsPDF)){ toast('Pembuat PDF belum siap, coba lagi sebentar'); return; }
+      try{ var blob = buildNotaPdf(data); await downloadBlob(data.filename, blob, 'Nota diunduh'); }
+      catch(e){ toast('Gagal membuat PDF'); }
+    };
+  }
+
+  initDb();
+})();
+</script>
+
+</body>
+</html>
